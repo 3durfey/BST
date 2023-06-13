@@ -17,9 +17,6 @@ function treeFactory() {
     insert(input) {
       let tempNode = this.rootNode;
       let nullFound = false;
-      //tempNode = tempNode.leftChild;
-      //tempNode.rightChild = nodeFactory(input, null, null);
-
       while (!nullFound) {
         if (input > tempNode.value) {
           if (tempNode.rightChild === null) {
@@ -39,7 +36,24 @@ function treeFactory() {
       }
     },
     delete(input) {
-      return;
+      let tempNode = this.rootNode;
+      while (true) {
+        if (input === tempNode.value) {
+          return tempNode;
+        } else if (input > tempNode.value) {
+          if (tempNode.rightChild === null) {
+            return "not found";
+          } else {
+            tempNode = tempNode.rightChild;
+          }
+        } else if (input < tempNode.value) {
+          if (tempNode.leftChild === null) {
+            return "not found";
+          } else {
+            tempNode = tempNode.leftChild;
+          }
+        }
+      }
     },
     find(input) {
       return;
@@ -72,11 +86,11 @@ function treeFactory() {
 }
 
 let tree = treeFactory();
-tree.buildTree(mergeSort(arrayOfRandom(4)));
+tree.buildTree(mergeSort([1, 2, 3, 4]));
 tree.insert(666);
 tree.insert(0);
 tree.insert(10);
-tree.insert(60);
+console.log(tree.delete(90));
 
 prettyPrint(tree.rootNode);
 function prettyPrint(node, prefix = "", isLeft = true) {
