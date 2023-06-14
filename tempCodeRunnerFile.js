@@ -1,2 +1,1 @@
-ray);
-      let tempNode =
+            let temp = tempNode.value;

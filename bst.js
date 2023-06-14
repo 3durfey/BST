@@ -37,20 +37,70 @@ function treeFactory() {
     },
     delete(input) {
       let tempNode = this.rootNode;
+      let parent = this.rootNode;
+      let side = "none";
       while (true) {
         if (input === tempNode.value) {
-          return tempNode;
+          //when both are null
+          if (tempNode.leftChild === null && tempNode.rightChild === null) {
+            console.log(1);
+            if (side === "left") {
+              parent.leftChild = null;
+            } else {
+              parent.rightChild = null;
+            }
+            //when only one node is null
+          } else if (
+            (tempNode.leftChild === null) ^
+            (tempNode.rightChild === null)
+          ) {
+            console.log(2);
+            let child;
+            tempNode.leftChild !== null
+              ? (child = tempNode.leftChild)
+              : (child = tempNode.rightChild);
+            if (side === "right") {
+              parent.rightChild = child;
+            } else {
+              parent.leftChild = child;
+            }
+          } else {
+            //when both nodes aren't null
+            parent = tempNode;
+            tempNode = tempNode.leftChild;
+            tempNodeParent = tempNode;
+            let travel = false;
+            while (!(tempNode.rightChild === null)) {
+              travel = true;
+              tempNodeParent = tempNode;
+              tempNode = tempNode.rightChild;
+            }
+            let temp = tempNode.value;
+            parent.value = tempNode.value;
+            if (tempNode.leftChild !== null) {
+              parent.leftChild = tempNode.leftChild;
+            } else if (travel) {
+              tempNodeParent.rightChild = null;
+            } else {
+              parent.leftChild = null;
+            }
+          }
+          return;
         } else if (input > tempNode.value) {
           if (tempNode.rightChild === null) {
             return "not found";
           } else {
+            parent = tempNode;
             tempNode = tempNode.rightChild;
+            side = "right";
           }
         } else if (input < tempNode.value) {
           if (tempNode.leftChild === null) {
             return "not found";
           } else {
+            parent = tempNode;
             tempNode = tempNode.leftChild;
+            side = "left";
           }
         }
       }
@@ -86,13 +136,23 @@ function treeFactory() {
 }
 
 let tree = treeFactory();
-tree.buildTree(mergeSort([1, 2, 3, 4]));
-tree.insert(666);
-tree.insert(0);
-tree.insert(10);
-console.log(tree.delete(90));
+tree.buildTree(mergeSort([1, 2, 3, 7, 23, 33, 42, 55, 66]));
+
+//console.log(tree.rootNode);
+tree.insert(24);
+tree.insert(35);
+tree.insert(32);
+
+tree.insert(43);
+
+tree.insert(41);
 
 prettyPrint(tree.rootNode);
+tree.delete(23);
+
+prettyPrint(tree.rootNode);
+
+//function to print the tree
 function prettyPrint(node, prefix = "", isLeft = true) {
   if (node === null) {
     return;
@@ -105,8 +165,7 @@ function prettyPrint(node, prefix = "", isLeft = true) {
     prettyPrint(node.leftChild, `${prefix}${isLeft ? "    " : "│   "}`, true);
   }
 }
-//console.log(tree.rootNode);
-console.log(tree.array);
+
 //functions for random number
 function arrayOfRandom(size) {
   let array = new Array(size);
