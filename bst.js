@@ -43,7 +43,6 @@ function treeFactory() {
         if (input === tempNode.value) {
           //when both are null
           if (tempNode.leftChild === null && tempNode.rightChild === null) {
-            console.log(1);
             if (side === "left") {
               parent.leftChild = null;
             } else {
@@ -54,7 +53,6 @@ function treeFactory() {
             (tempNode.leftChild === null) ^
             (tempNode.rightChild === null)
           ) {
-            console.log(2);
             let child;
             tempNode.leftChild !== null
               ? (child = tempNode.leftChild)
@@ -106,9 +104,33 @@ function treeFactory() {
       }
     },
     find(input) {
-      return;
+      let currentNode = this.rootNode;
+      while (currentNode.value !== input) {
+        if (input > currentNode.value) {
+          if (currentNode.rightChild === null) {
+            return "not found";
+          } else {
+            currentNode = currentNode.rightChild;
+          }
+        } else if (input < currentNode.value) {
+          if (currentNode.leftChild === null) {
+            return "not found";
+          } else {
+            currentNode = currentNode.leftChild;
+          }
+        }
+      }
+      return currentNode.value + " found";
     },
     levelOrder(func) {
+      let queue = new Array();
+      queue.push(this.rootNode);
+      while (queue.length > 0) {
+        let node = queue.shift();
+        func(node);
+        if (node.leftChild !== null) queue.push(node.leftChild);
+        if (node.rightChild !== null) queue.push(node.rightChild);
+      }
       return;
     },
     inorder(func) {
@@ -136,22 +158,15 @@ function treeFactory() {
 }
 
 let tree = treeFactory();
-tree.buildTree(mergeSort([1, 2, 3, 7, 23, 33, 42, 55, 66]));
+tree.buildTree(mergeSort([1, 2, 3, 23, 33, 42, 55, 66, 70, 89]));
 
-//console.log(tree.rootNode);
-tree.insert(24);
-tree.insert(35);
-tree.insert(32);
-
-tree.insert(43);
-
-tree.insert(41);
-
-prettyPrint(tree.rootNode);
-tree.delete(23);
-
-prettyPrint(tree.rootNode);
-
+//prettyPrint(tree.rootNode);
+let count = 0;
+function func(input) {
+  count++;
+  console.log(count);
+}
+tree.levelOrder(func);
 //function to print the tree
 function prettyPrint(node, prefix = "", isLeft = true) {
   if (node === null) {
@@ -175,8 +190,7 @@ function arrayOfRandom(size) {
   }
   return array;
 }
-//let n = split(mergeSort(arrayOfRandom(5)));
-//console.log(n);
+
 //function to return middle number, then recursively return middle of each side till end
 function split(array) {
   if (array.length === 0) return null;
