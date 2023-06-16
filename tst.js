@@ -1,5 +1,7 @@
-const result = () => {
-  return 23;
-};
-result();
-console.log(result());
+function recursion(input = 40) {
+  if (input === 50) return 0;
+  else {
+    return 1 + recursion(++input);
+  }
+}
+console.log(recursion());
