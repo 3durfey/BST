@@ -48,74 +48,33 @@ function treeFactory() {
       }
     },
 
-    delete(input) {
-      let tempNode = this.rootNode;
-      let parent = this.rootNode;
-      let side = "none";
+    delete(input, node = this.rootNode) {
+      //when node is null return
+      if (node === null) return node;
 
-      while (true) {
-        if (input === tempNode.value) {
-          //when both are null
-          if (tempNode.leftChild === null && tempNode.rightChild === null) {
-            if (side === "left") {
-              parent.leftChild = null;
-            } else {
-              parent.rightChild = null;
-            }
-            //when only one node is null
-          } else if (
-            (tempNode.leftChild === null) ^
-            (tempNode.rightChild === null)
-          ) {
-            let child;
-            tempNode.leftChild !== null
-              ? (child = tempNode.leftChild)
-              : (child = tempNode.rightChild);
-            if (side === "right") {
-              parent.rightChild = child;
-            } else {
-              parent.leftChild = child;
-            }
-          } else {
-            //when both nodes aren't null
-            parent = tempNode;
-            tempNode = tempNode.leftChild;
-            tempNodeParent = tempNode;
-            let travel = false;
-            while (!(tempNode.rightChild === null)) {
-              travel = true;
-              tempNodeParent = tempNode;
-              tempNode = tempNode.rightChild;
-            }
-            let temp = tempNode.value;
-            parent.value = tempNode.value;
-            if (tempNode.leftChild !== null) {
-              parent.leftChild = tempNode.leftChild;
-            } else if (travel) {
-              tempNodeParent.rightChild = null;
-            } else {
-              parent.leftChild = null;
-            }
+      if (node.value === input) {
+        //when both are null
+        if (node.leftChild === null && node.rightChild === null) return null;
+        //when only one node is null
+        else if (node.rightChild === null) return node.leftChild;
+        else if (node.leftChild === null) return node.rightChild;
+        //when both are not null
+        else {
+          let currentNode = node.leftChild;
+          while (currentNode.rightChild !== null) {
+            currentNode = currentNode.rightChild;
           }
-          return;
-        } else if (input > tempNode.value) {
-          if (tempNode.rightChild === null) {
-            return "not found";
-          } else {
-            parent = tempNode;
-            tempNode = tempNode.rightChild;
-            side = "right";
-          }
-        } else if (input < tempNode.value) {
-          if (tempNode.leftChild === null) {
-            return "not found";
-          } else {
-            parent = tempNode;
-            tempNode = tempNode.leftChild;
-            side = "left";
-          }
+          node.value = currentNode.value;
+          node.leftChild = this.delete(node.value, node.leftChild);
         }
       }
+
+      //go down till you find node
+      if (input < node.value)
+        node.leftChild = this.delete(input, node.leftChild);
+      else node.rightChild = this.delete(input, node.rightChild);
+
+      return node;
     },
     find(input) {
       let currentNode = this.rootNode;
@@ -128,6 +87,7 @@ function treeFactory() {
           else currentNode = currentNode.leftChild;
         }
       }
+      currentNode = null;
       return currentNode;
     },
     levelOrder(func) {
@@ -228,13 +188,19 @@ function treeFactory() {
 }
 //running through binary tree functions
 let tree = treeFactory();
-tree.buildTree(arrayOfRandom(10));
+tree.buildTree([2, 56, 3445, 22, 677, 43, 12, 1, 78, 9]);
 tree.insert(90);
 tree.insert(999);
 tree.insert(900);
+//tree.insert(91);
+//tree.insert(92);
+//tree.insert(89);
+
+prettyPrint(tree.rootNode);
+tree.delete(78);
+console.log("------------------------------");
 prettyPrint(tree.rootNode);
 tree.rebalance();
-prettyPrint(tree.rootNode);
 
 //function to print the tree
 function prettyPrint(node, prefix = "", isLeft = true) {
